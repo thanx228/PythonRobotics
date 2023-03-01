@@ -40,29 +40,28 @@ class SweepSearcher:
         n_x_index = self.moving_direction + c_x_index
         n_y_index = c_y_index
 
-        # found safe grid
-        if not grid_map.check_occupied_from_xy_index(n_x_index, n_y_index,
-                                                     occupied_val=0.5):
+        if not grid_map.check_occupied_from_xy_index(
+            n_x_index, n_y_index, occupied_val=0.5
+        ):
             return n_x_index, n_y_index
-        else:  # occupied
-            next_c_x_index, next_c_y_index = self.find_safe_turning_grid(
-                c_x_index, c_y_index, grid_map)
-            if (next_c_x_index is None) and (next_c_y_index is None):
-                # moving backward
-                next_c_x_index = -self.moving_direction + c_x_index
-                next_c_y_index = c_y_index
-                if grid_map.check_occupied_from_xy_index(next_c_x_index,
-                                                         next_c_y_index):
-                    # moved backward, but the grid is occupied by obstacle
-                    return None, None
-            else:
-                # keep moving until end
-                while not grid_map.check_occupied_from_xy_index(
-                        next_c_x_index + self.moving_direction,
-                        next_c_y_index, occupied_val=0.5):
-                    next_c_x_index += self.moving_direction
-                self.swap_moving_direction()
-            return next_c_x_index, next_c_y_index
+        next_c_x_index, next_c_y_index = self.find_safe_turning_grid(
+            c_x_index, c_y_index, grid_map)
+        if (next_c_x_index is None) and (next_c_y_index is None):
+            # moving backward
+            next_c_x_index = -self.moving_direction + c_x_index
+            next_c_y_index = c_y_index
+            if grid_map.check_occupied_from_xy_index(next_c_x_index,
+                                                     next_c_y_index):
+                # moved backward, but the grid is occupied by obstacle
+                return None, None
+        else:
+            # keep moving until end
+            while not grid_map.check_occupied_from_xy_index(
+                    next_c_x_index + self.moving_direction,
+                    next_c_y_index, occupied_val=0.5):
+                next_c_x_index += self.moving_direction
+            self.swap_moving_direction()
+        return next_c_x_index, next_c_y_index
 
     def find_safe_turning_grid(self, c_x_index, c_y_index, grid_map):
 
@@ -80,13 +79,12 @@ class SweepSearcher:
         return None, None
 
     def is_search_done(self, grid_map):
-        for ix in self.x_indexes_goal_y:
-            if not grid_map.check_occupied_from_xy_index(ix, self.goal_y,
-                                                         occupied_val=0.5):
-                return False
-
-        # all lower grid is occupied
-        return True
+        return all(
+            grid_map.check_occupied_from_xy_index(
+                ix, self.goal_y, occupied_val=0.5
+            )
+            for ix in self.x_indexes_goal_y
+        )
 
     def update_turning_window(self):
         # turning window definition

@@ -31,8 +31,7 @@ class Node:
         self.parent_index = parent_index
 
     def __str__(self):
-        return str(self.x) + "," + str(self.y) + "," +\
-               str(self.cost) + "," + str(self.parent_index)
+        return f"{str(self.x)},{str(self.y)},{str(self.cost)},{str(self.parent_index)}"
 
 
 def prm_planning(start_x, start_y, goal_x, goal_y,
@@ -82,7 +81,7 @@ def is_collision(sx, sy, gx, gy, rr, obstacle_kd_tree):
     D = rr
     n_step = round(d / D)
 
-    for i in range(n_step):
+    for _ in range(n_step):
         dist, _ = obstacle_kd_tree.query([x, y])
         if dist <= rr:
             return True  # collision
@@ -91,10 +90,7 @@ def is_collision(sx, sy, gx, gy, rr, obstacle_kd_tree):
 
     # goal point check
     dist, _ = obstacle_kd_tree.query([gx, gy])
-    if dist <= rr:
-        return True  # collision
-
-    return False  # OK
+    return dist <= rr
 
 
 def generate_road_map(sample_x, sample_y, rr, obstacle_kd_tree):
@@ -152,7 +148,7 @@ def dijkstra_planning(sx, sy, gx, gy, road_map, sample_x, sample_y):
     start_node = Node(sx, sy, 0.0, -1)
     goal_node = Node(gx, gy, 0.0, -1)
 
-    open_set, closed_set = dict(), dict()
+    open_set, closed_set = {}, {}
     open_set[len(road_map) - 2] = start_node
 
     path_found = True
@@ -260,7 +256,7 @@ def sample_points(sx, sy, gx, gy, rr, ox, oy, obstacle_kd_tree, rng):
 
 
 def main(rng=None):
-    print(__file__ + " start!!")
+    print(f"{__file__} start!!")
 
     # start and goal position
     sx = 10.0  # [m]
