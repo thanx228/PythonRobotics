@@ -25,8 +25,7 @@ class DijkstraSearch:
             self.edge_ids = edge_ids
 
         def __str__(self):
-            return str(self.x) + "," + str(self.y) + "," + str(
-                self.cost) + "," + str(self.parent)
+            return f"{str(self.x)},{str(self.y)},{str(self.cost)},{str(self.parent)}"
 
     def __init__(self, show_animation):
         self.show_animation = show_animation
@@ -48,7 +47,7 @@ class DijkstraSearch:
         goal_node = self.Node(gx, gy, 0.0, -1)
         current_node = None
 
-        open_set, close_set = dict(), dict()
+        open_set, close_set = {}, {}
         open_set[self.find_id(node_x, node_y, start_node)] = start_node
 
         while True:
@@ -115,17 +114,19 @@ class DijkstraSearch:
         return rx, ry
 
     def has_node_in_set(self, target_set, node):
-        for key in target_set:
-            if self.is_same_node(target_set[key], node):
-                return True
-        return False
+        return any(self.is_same_node(target_set[key], node) for key in target_set)
 
     def find_id(self, node_x_list, node_y_list, target_node):
-        for i, _ in enumerate(node_x_list):
-            if self.is_same_node_with_xy(node_x_list[i], node_y_list[i],
-                                         target_node):
-                return i
-        return None
+        return next(
+            (
+                i
+                for i, _ in enumerate(node_x_list)
+                if self.is_same_node_with_xy(
+                    node_x_list[i], node_y_list[i], target_node
+                )
+            ),
+            None,
+        )
 
     @staticmethod
     def is_same_node_with_xy(node_x, node_y, node_b):
